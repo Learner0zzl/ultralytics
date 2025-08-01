@@ -9,6 +9,7 @@ Usage:
 import gc
 import math
 import os
+import random
 import subprocess
 import time
 import warnings
@@ -363,6 +364,11 @@ class BaseTrainer:
         if self.args.close_mosaic:
             base_idx = (self.epochs - self.args.close_mosaic) * nb
             self.plot_idx.extend([base_idx, base_idx + 1, base_idx + 2])
+        # 增加一些train_batch的打印
+        if nb > 10:
+            self.plot_idx.extend([3, 4, 5, 6, 7, 8, 9])
+        # import random
+        # self.plot_idx.extend(random.sample(range(10, nb), nb//50))
         epoch = self.start_epoch
         self.optimizer.zero_grad()  # zero any resumed gradients to ensure stability on train start
         while True:
@@ -443,7 +449,7 @@ class BaseTrainer:
                         )
                     )
                     self.run_callbacks("on_batch_end")
-                    if self.args.plots and ni in self.plot_idx:
+                    if self.args.plots and (ni in self.plot_idx or ni % 100 == 0):
                         self.plot_training_samples(batch, ni)
 
                 self.run_callbacks("on_train_batch_end")
