@@ -1,11 +1,10 @@
-import utils
-
 from ultralytics import YOLO
-from utils import *
+from my_utils import *
 
 
 if __name__ == '__main__':
-    model = YOLO(r"E:\Git\ultralytics\runs\segment\ore_seg\0801_e50_i2048_b4\weights\best.pt")  # pretrained YOLO11n model
+    model = YOLO(r"E:\Git\ultralytics\runs\segment\ore_seg\0731_e100_i1024_b8\weights\best.pt")
+    # model = YOLO(r"E:\Git\ultralytics\runs\segment\ore_seg\0801_e50_i2048_b4\weights\best.pt")
     parameters = {
         "save_txt": False,
     }
@@ -17,4 +16,4 @@ if __name__ == '__main__':
         # result.show()  # display to screen
         # result.save(filename=rf"{img_path}_show.png")  # save to disk
         show_img = result.plot()
-        cv2_imwrite(f"{img_path}_show.png", show_img, ".png")
+        cv2_imwrite(f"{img_path}_show_i1024.png", show_img, ".png")
