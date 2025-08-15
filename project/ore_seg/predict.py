@@ -7,7 +7,7 @@ import torch
 from numpy import ndarray
 from typing import List, Dict, Tuple, Optional
 from ultralytics import YOLO
-from my_utils import cv2_imread, cv2_imwrite, find_image_files  # 假设utils中包含这些函数
+from my_utils import cv2_imread, cv2_imwrite, find_image_files
 
 
 class SlidingWindowSegmenter:
@@ -32,7 +32,11 @@ class SlidingWindowSegmenter:
             edge_box_iou_threshold: float = 0.2,  # 边缘情况的box阈值
             window_edge_sensitivity: float = 0.15,
             # 小部分包含的判断阈值
-            containment_threshold: float = 0.3  # 一个目标被另一个包含的比例阈值
+            containment_threshold: float = 0.3,  # 一个目标被另一个包含的比例阈值
+            # 过滤掉过小的目标，大概率是水滴或者碎渣
+            height_thr: int = 30,
+            width_thr: int = 30,
+            area_thr: int = 2000
     ):
         """
         初始化滑动窗口分割器
@@ -50,6 +54,9 @@ class SlidingWindowSegmenter:
             edge_box_iou_threshold: 窗口边缘目标box合并的IOU阈值，默认0.2
             window_edge_sensitivity: 判定为窗口边缘的比例阈值，默认0.15（窗口大小的15%）
             containment_threshold: 目标包含关系的判定阈值，默认0.3
+            height_thr: 高度阈值，目标是否被过滤的判定阈值，默认30
+            width_thr: 宽度阈值，目标是否被过滤的判定阈值，默认30
+            area_thr: 面积阈值，目标是否被过滤的判定阈值，默认2000
         """
         self.model_path = model_path
         self.window_size = window_size
@@ -67,9 +74,16 @@ class SlidingWindowSegmenter:
         self.window_edge_sensitivity = window_edge_sensitivity
         self.containment_threshold = containment_threshold
 
+        # 过滤阈值设置
+        self.height_thr = height_thr
+        self.width_thr = width_thr
+        self.area_thr = area_thr
+
         # 设备自动选择与模型加载
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = self._load_model()
+        self.names = self.model.names
+        print(f"模型加载完成! 设备: {self.device} 检测项: {self.names}")
 
         # 结果存储
         self.original_image = None
@@ -284,12 +298,20 @@ class SlidingWindowSegmenter:
                 )
 
                 # 计算目标面积
-                area = (x2_original - x1_original) * (y2_original - y1_original)
+                width = x2_original - x1_original
+                height = y2_original - y1_original
+                area = width * height
+
+                # 如果目标过小则判为ok
+                if width < self.width_thr or height < self.height_thr or area < self.area_thr:
+                    cls = "ok"
+                else:
+                    cls = self.names[int(box[5])]
 
                 window_results.append({
                     'box': [x1_original, y1_original, x2_original, y2_original],
                     'confidence': float(box[4]),
-                    'class': int(box[5]),
+                    'class': cls,
                     'mask': mask_original,
                     'window_id': window_id,
                     'is_near_edge': is_near_window_edge,
@@ -525,8 +547,7 @@ class SlidingWindowSegmenter:
     def visualize_results(
             self,
             output_path: str = None,
-            class_names: Optional[Dict[int, str]] = None,
-            class_colors: Optional[Dict[int, Tuple[int, int, int]]] = None,
+            class_colors: Optional[Dict[str, Tuple[int, int, int]]] = None,
             use_raw_results: bool = False
     ) -> None:
         """
@@ -534,7 +555,6 @@ class SlidingWindowSegmenter:
 
         参数:
             output_path: 结果保存路径（None则显示图像）
-            class_names: 类别ID到名称的映射
             class_colors: 类别ID到颜色的映射
             use_raw_results: 是否使用原始结果（未合并）
         """
@@ -546,7 +566,6 @@ class SlidingWindowSegmenter:
         print(f"使用{'原始' if use_raw_results else '合并后'}结果可视化，共 {len(results_to_use)} 个目标")
 
         result_image = self.original_image.copy()
-        class_names = class_names or {}
         class_colors = class_colors or {}
 
         for idx, result in enumerate(results_to_use):
@@ -564,8 +583,7 @@ class SlidingWindowSegmenter:
             cv2.rectangle(result_image, (x1, y1), (x2, y2), color, 2)
 
             # 绘制标签
-            class_name = class_names.get(cls, f"Class {cls}")
-            label = f"{class_name}_{idx}: {confidence:.2f}"
+            label = f"{cls}_{idx}: {confidence:.2f}"
             cv2.putText(
                 result_image, label, (x1, max(y1 - 10, 10)),  # 避免标签超出图像
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2
@@ -668,46 +686,51 @@ class SlidingWindowSegmenter:
 if __name__ == "__main__":
     # 初始化滑动窗口分割器
     segmenter = SlidingWindowSegmenter(
-        model_path=r"E:\Git\ultralytics\runs\segment\ore_seg\0801_e50_i2048_b4\weights\best.pt",  # 替换为你的模型路径
+        model_path=r"E:\Git\ultralytics\runs\segment\ore_seg\0812_e50_i2048_b4_continue_from_0812_e100_i2048_b4\weights\best.pt",  # 替换为你的模型路径
         window_size=(4096, 4096),
+        model_input_size=(2048, 2048),
         overlap=512,
-        conf_threshold=0.5
+        conf_threshold=0.25
     )
 
-    root_dir = r"E:\Data\JLHD\第一次采集"
+    # root_dir = r"E:\Data\JLHD\第一次采集"
+    # root_dir = r"E:\Data\MVS采集图像\02-钼矿"
+    root_dir = r"E:\Data\MVS采集图像\03-工业硅渣"
     img_paths = find_image_files(root_dir, "bmp")
     for idx, img_path in enumerate(img_paths):
         # if "Image_20250723101349379" not in img_path:
         #     continue
         print(f"Processing image {idx + 1}/{len(img_paths)}: {img_path}")
-        # 处理图像
-        t0 = time.time()
+        # 读取图像
         # img_path = r"E:\Data\JLHD\第一次采集\废 (1)\Image_20250723095956704.bmp"  # 替换为你的图像路径
         src_img = cv2_imread(img_path)
-        src_img = src_img[:, :-512]
+        # src_img = src_img[:, :-512]
+        # 处理图像
+        t0 = time.time()
         merged_results, original_image = segmenter.process_image(src_img)
         print(f"处理完成，耗时: {(time.time() - t0) * 1000:.2f} ms")
 
         # 可视化并保存结果
         t0 = time.time()
-        output_path = osp.splitext(img_path)[0] + "_show.png"  # 结果输出路径
-        class_names = {0: "ore"}
-        class_colors = {0: (0, 0, 128)}
+        output_path = osp.splitext(img_path)[0] + "_show_new_conf0.25.png"  # 结果输出路径
+        class_colors = {
+            "ore": (0, 0, 128),
+            "ok": (0, 128, 0),
+        }
         segmenter.visualize_results(
             output_path,
-            class_names,
             class_colors,
             use_raw_results=False
         )
         print(f"可视化完成，耗时: {(time.time() - t0) * 1000:.2f} ms")
 
         # 保存目标详情
-        t0 = time.time()
-        segmenter.save_object_details(
-            img_path=img_path,
-            save_mask=True,
-            save_contour=True,
-            use_raw_results=False,
-            expand=20
-        )
-        print(f"保存目标详情完成，耗时: {(time.time() - t0) * 1000:.2f} ms")
+        # t0 = time.time()
+        # segmenter.save_object_details(
+        #     img_path=img_path,
+        #     save_mask=True,
+        #     save_contour=True,
+        #     use_raw_results=False,
+        #     expand=20
+        # )
+        # print(f"保存目标详情完成，耗时: {(time.time() - t0) * 1000:.2f} ms")
