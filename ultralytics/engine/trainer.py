@@ -449,7 +449,7 @@ class BaseTrainer:
                         )
                     )
                     self.run_callbacks("on_batch_end")
-                    if self.args.plots and (ni in self.plot_idx or ni % 100 == 0):
+                    if self.args.plots and (ni in self.plot_idx or ni % 1000 == 0):
                         self.plot_training_samples(batch, ni)
 
                 self.run_callbacks("on_train_batch_end")

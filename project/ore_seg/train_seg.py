@@ -10,7 +10,7 @@ def train():
     results = model.train(data=r"project\ore_seg\dataset.yaml",
                           cfg=r"project\ore_seg\cfg.yaml",
                           epochs=100, imgsz=2048, batch=4,
-                          name=r"ore_seg\0814_e100_i2048_b4")
+                          name=r"ore_seg\0818_e100_i2048_b4")
 
 if __name__ == '__main__':
     train()

@@ -36,7 +36,9 @@ class SlidingWindowSegmenter:
             # 过滤掉过小的目标，大概率是水滴或者碎渣
             height_thr: int = 30,
             width_thr: int = 30,
-            area_thr: int = 2000
+            area_thr: int = 2000,
+            # 渲染参数
+            class_colors: Optional[Dict[str, Tuple]] = None,
     ):
         """
         初始化滑动窗口分割器
@@ -57,6 +59,7 @@ class SlidingWindowSegmenter:
             height_thr: 高度阈值，目标是否被过滤的判定阈值，默认30
             width_thr: 宽度阈值，目标是否被过滤的判定阈值，默认30
             area_thr: 面积阈值，目标是否被过滤的判定阈值，默认2000
+            class_colors: 类别颜色字典，用于渲染，默认None 随机生成
         """
         self.model_path = model_path
         self.window_size = window_size
@@ -90,6 +93,9 @@ class SlidingWindowSegmenter:
         self.merged_results = None
         self.all_raw_results = []
         self.window_positions = {}  # 窗口ID到位置及邻居的映射
+
+        # 渲染参数
+        self.class_colors = class_colors if class_colors is not None else self._generate_class_colors(self.names)
 
     def _load_model(self) -> YOLO:
         """加载YOLO分割模型并移动到指定设备"""
@@ -194,6 +200,17 @@ class SlidingWindowSegmenter:
             print(f"未合并，共 {len(self.merged_results)} 个目标")
 
         return self.merged_results, self.original_image
+
+    def _generate_class_colors(self, names):
+        class_colors = dict()
+        # 为未指定颜色的类别生成随机颜色
+        for cls in names.values():
+            class_colors[cls] = self._generate_random_colors()
+
+        return class_colors
+
+    def _generate_random_colors(self):
+        return tuple(np.random.randint(0, 255, size=3))
 
     def _get_neighbor_windows(self, i: int, j: int, num_h: int, num_w: int) -> List[str]:
         """获取相邻窗口ID列表"""
@@ -547,7 +564,6 @@ class SlidingWindowSegmenter:
     def visualize_results(
             self,
             output_path: str = None,
-            class_colors: Optional[Dict[str, Tuple[int, int, int]]] = None,
             use_raw_results: bool = False
     ) -> None:
         """
@@ -555,7 +571,6 @@ class SlidingWindowSegmenter:
 
         参数:
             output_path: 结果保存路径（None则显示图像）
-            class_colors: 类别ID到颜色的映射
             use_raw_results: 是否使用原始结果（未合并）
         """
         if self.original_image is None or self.merged_results is None:
@@ -566,18 +581,17 @@ class SlidingWindowSegmenter:
         print(f"使用{'原始' if use_raw_results else '合并后'}结果可视化，共 {len(results_to_use)} 个目标")
 
         result_image = self.original_image.copy()
-        class_colors = class_colors or {}
 
         for idx, result in enumerate(results_to_use):
             x1, y1, x2, y2 = map(int, result['box'])
-            cls = result['class']
+            cls: str = result['class']
             confidence = result['confidence']
             mask = result['mask']
 
-            # 为未指定颜色的类别生成随机颜色
-            if cls not in class_colors:
-                class_colors[cls] = tuple(np.random.randint(0, 255, size=3).tolist())
-            color = class_colors[cls]
+            color = self.class_colors.get(cls)
+            if color is None:
+                color = self._generate_random_colors()
+                self.class_colors[cls] = color
 
             # 绘制边界框
             cv2.rectangle(result_image, (x1, y1), (x2, y2), color, 2)
@@ -685,12 +699,17 @@ class SlidingWindowSegmenter:
 # 使用示例
 if __name__ == "__main__":
     # 初始化滑动窗口分割器
+    class_colors = {
+        "ore": (0, 0, 128),
+        "ok": (0, 128, 0),
+    }
     segmenter = SlidingWindowSegmenter(
         model_path=r"E:\Git\ultralytics\runs\segment\ore_seg\0812_e50_i2048_b4_continue_from_0812_e100_i2048_b4\weights\best.pt",  # 替换为你的模型路径
         window_size=(4096, 4096),
         model_input_size=(2048, 2048),
         overlap=512,
-        conf_threshold=0.25
+        conf_threshold=0.25,
+        class_colors=class_colors,
     )
 
     # root_dir = r"E:\Data\JLHD\第一次采集"
@@ -713,24 +732,19 @@ if __name__ == "__main__":
         # 可视化并保存结果
         t0 = time.time()
         output_path = osp.splitext(img_path)[0] + "_show_new_conf0.25.png"  # 结果输出路径
-        class_colors = {
-            "ore": (0, 0, 128),
-            "ok": (0, 128, 0),
-        }
         segmenter.visualize_results(
             output_path,
-            class_colors,
             use_raw_results=False
         )
         print(f"可视化完成，耗时: {(time.time() - t0) * 1000:.2f} ms")
 
         # 保存目标详情
-        # t0 = time.time()
-        # segmenter.save_object_details(
-        #     img_path=img_path,
-        #     save_mask=True,
-        #     save_contour=True,
-        #     use_raw_results=False,
-        #     expand=20
-        # )
-        # print(f"保存目标详情完成，耗时: {(time.time() - t0) * 1000:.2f} ms")
+        t0 = time.time()
+        segmenter.save_object_details(
+            img_path=img_path,
+            save_mask=True,
+            save_contour=True,
+            use_raw_results=False,
+            expand=20
+        )
+        print(f"保存目标详情完成，耗时: {(time.time() - t0) * 1000:.2f} ms")
