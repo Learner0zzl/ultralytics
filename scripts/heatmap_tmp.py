@@ -67,7 +67,8 @@ tensor = transform(img).unsqueeze(0)
 # target_layers = model.model.model[-2]
 # print(target_layers)
 
-model = YOLO(r"E:\Git\ultralytics\ultralytics\cfg\models\11\yolo11.yaml").load(rf"E:\Git\ultralytics\runs\detect\HYJTFJW_coal_det\0829_e150_i320_b8_cfg1\weights\best.pt")
+model = YOLO(
+    r"/ultralytics/cfg/models/11/yolo11.yaml").load(rf"E:\Git\ultralytics\runs\detect\HYJTFJW_coal_det\0829_e150_i320_b8_cfg1\weights\best.pt")
 model.to(torch.device('cuda:0')).eval()
 
 results = model([rgb_img])

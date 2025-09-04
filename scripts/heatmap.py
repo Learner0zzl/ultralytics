@@ -175,8 +175,8 @@ def get_params():
             # GradCAMPlusPlus, GradCAM, XGradCAM, EigenCAM, HiResCAM, LayerCAM, RandomCAM, EigenGradCAM, 使用的热力图库文件不同的效果不一样可以多尝试
             'layer': 'model.model[22]',  # 想要检测的对应层
             'backward_type': 'box',  # class, box, all
-            'conf_threshold': 0.00,  # 0.6  # 置信度阈值，有的时候你的进度条到一半就停止了就是因为没有高于此值的了
-            'ratio': 0.02  # 0.02-0.1
+            'conf_threshold': 0.01,  # 0.6  # 置信度阈值，有的时候你的进度条到一半就停止了就是因为没有高于此值的了
+            'ratio': 0.1  # 0.02-0.1
         }
         yield params
 
@@ -184,13 +184,19 @@ if __name__ == '__main__':
     for params in get_params():
         print(f"开始绘制{params['method']}热力图")
         try:
+            # 初始化
             model = yolov11_heatmap(**params)
+            # 单张测试
             # img_path = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val\8\8-0.78418_C_1_20250614_164005_22793.bmp"
-            img_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val_8_unknown"
-            for img_path in find_files_by_ext(img_dir, '.bmp'):
-                img_name = osp.basename(img_path)
-                print(f"正在处理{img_name}")
-                model(img_path, f'result/{params["method"]}-val_8_unknown-c0_r0.02/{img_name}_l22')  # 第一个是检测的文件, 第二个是保存的路径
+            img_path = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\tmp_label\val\9\9-0.99805_C_1_20250612_002958_1408.bmp"
+            img_name = osp.basename(img_path)
+            model(img_path, f'result/{params["method"]}_{img_name}_l22')
+            # 批量测试
+            # img_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val_8_unknown"
+            # for img_path in find_files_by_ext(img_dir, '.bmp'):
+            #     img_name = osp.basename(img_path)
+            #     print(f"正在处理{img_name}")
+            #     model(img_path, f'result/{params["method"]}-val_8_unknown-c0_r0.02/{img_name}_l22')  # 第一个是检测的文件, 第二个是保存的路径
         except Exception as e:
             print(f"绘制{params['method']}热力图失败")
             print(e)
