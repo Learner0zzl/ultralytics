@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append(r"E:\PythonProject")
-
 import numpy as np
 import os
 import os.path as osp
@@ -21,20 +17,21 @@ def postprocess(result):
 
 
 if __name__ == '__main__':
-    model_name = r"0829_e150_i320_b8_cfg1"
+    model_name = r"0828_e100_i320_b8_cfg0"
     model = YOLO(rf"E:\Git\ultralytics\runs\detect\HYJTFJW_coal_det\{model_name}\weights\best.pt")
     parameters = {
-        "conf": 0.1,
+        # "conf": 0.1,
         "save_txt": False,
     }
-    # root_dir = r"E:\Data\HYJTFJA\0825_labeled\testset_320"
+    root_dir = r"E:\Data\HYJTFJA\0825_labeled\testset_320"
     # root_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val"
-    root_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val_8_unknown"
+    # root_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val_8_unknown"
     img_paths = find_files_by_ext(root_dir, '.bmp', mode="dict", func=lambda f: osp.splitext(f)[0])
     # json_paths = find_files_by_ext(root_dir, '.json', mode="dict", func=lambda f: osp.splitext(f)[0])
-    json_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\raw\jsons"
+    json_dir = r"E:\Data\HYJTFJA\0825_labeled\testset_320"
+    # json_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\raw\jsons"
     json_paths = find_files_by_ext(json_dir, '.json', mode="dict", func=lambda f: osp.splitext(f)[0])
-    dst_dir = rf"{root_dir}_C5_{model_name}_conf0.1"
+    dst_dir = rf"{root_dir}_C5_{model_name}_cfg0_conf0.25"
     os.makedirs(dst_dir, exist_ok=True)
     # 是否在原图上画标注进行对比
     show_label = True

@@ -188,15 +188,15 @@ if __name__ == '__main__':
             model = yolov11_heatmap(**params)
             # 单张测试
             # img_path = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val\8\8-0.78418_C_1_20250614_164005_22793.bmp"
-            img_path = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\tmp_label\val\9\9-0.99805_C_1_20250612_002958_1408.bmp"
-            img_name = osp.basename(img_path)
-            model(img_path, f'result/{params["method"]}_{img_name}_l22')
+            # img_path = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\tmp_label\val\9\9-0.99805_C_1_20250612_002958_1408.bmp"
+            # img_name = osp.basename(img_path)
+            # model(img_path, f'result/{params["method"]}_{img_name}_l22')
             # 批量测试
-            # img_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val_8_unknown"
-            # for img_path in find_files_by_ext(img_dir, '.bmp'):
-            #     img_name = osp.basename(img_path)
-            #     print(f"正在处理{img_name}")
-            #     model(img_path, f'result/{params["method"]}-val_8_unknown-c0_r0.02/{img_name}_l22')  # 第一个是检测的文件, 第二个是保存的路径
+            img_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val_local_obj_test"
+            for img_path in find_files_by_ext(img_dir, '.bmp'):
+                img_name = osp.basename(img_path)
+                print(f"正在处理{img_name}")
+                model(img_path, f'result/{params["method"]}-val_local_obj_test-c0.01_r0.1/{img_name}_l22')  # 第一个是检测的文件, 第二个是保存的路径
         except Exception as e:
             print(f"绘制{params['method']}热力图失败")
             print(e)
