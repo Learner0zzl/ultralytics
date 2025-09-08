@@ -10,8 +10,8 @@ def train():
     # Train the model
     results = model.train(data=r"project\HYJTFJA_21_250825_320-det\dataset.yaml",
                           cfg=r"project\HYJTFJA_21_250825_320-det\cfg1.yaml",
-                          epochs=300, imgsz=320, batch=16, close_mosaic=50, save_period=50, patience=100,
-                          name=r"HYJTFJA_21_250825_320-det\0905_e300_i320_b16_cfg1")
+                          epochs=200, imgsz=320, batch=16, close_mosaic=50,
+                          name=r"HYJTFJA_21_250825_320-det\0908_e200_i320_b16_cfg1_tv")
 
 if __name__ == '__main__':
     train()

@@ -2,8 +2,8 @@
 
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
 path: E:\Data # dataset root dir
-train: 04_FJA_coal\HYJTFJA_21_250825_320-det\images\train # train images (relative to 'path') 4 images
-val: 04_FJA_coal\HYJTFJA_21_250825_320-det\images\val # val images (relative to 'path') 4 images
+train: 04_FJA_coal\HYJTFJA_21_250825_320-det\images # train images (relative to 'path') 4 images
+val: 04_FJA_coal\HYJTFJA_21_250825_320-det\images # val images (relative to 'path') 4 images
 test: # test images (optional)
 
 # Classes
