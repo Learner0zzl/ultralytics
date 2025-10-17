@@ -9,9 +9,10 @@ def train():
 
     # Train the model
     results = model.train(data=r"project\SXAZYH_coal_det\dataset.yaml",
-                          cfg=r"project\SXAZYH_coal_det\cfg.yaml",
-                          epochs=150, imgsz=160, batch=8, close_mosaic=50,
-                          name=r"SXAZYH_coal_det\0821_e150_i160_b8")
+                          # cfg=r"project\SXAZYH_coal_det\cfg.yaml",
+                          epochs=10, imgsz=160, batch=4, close_mosaic=10, device='cpu',
+                          project=r"E:\Git\ultralytics\runs\detect\SXAZYH_coal_det",
+                          name=r"0930_e10_i160_b4-tmp-cpu_test")
 
 if __name__ == '__main__':
     train()

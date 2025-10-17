@@ -8,11 +8,11 @@ def train():
     # model = YOLO(r"E:\Git\ultralytics\runs\detect\HYJTFJW_coal_det\0829_e150_i320_b8_cfg1\weights\best.pt")  # build from YAML and transfer weights
     print(model.info(verbose=True))
     # Train the model
-    results = model.train(data=r"project\HYJTFJA_21_250825_320-det\dataset.yaml",
-                          cfg=r"project\HYJTFJA_21_250825_320-det\cfg1.yaml",
-                          epochs=10, imgsz=320, batch=16, close_mosaic=10, device='cpu',
-                          project=r"E:\Git\ultralytics\runs\detect\HYJTFJA_21_250825_320-det",
-                          name=r"0929_e10_i320_b16_cfg1_tv-tmp-cpu_test")
+    results = model.train(data=r"project\HYJTFJA_11_251013_320-det\dataset.yaml",
+                          cfg=r"project\HYJTFJA_11_251013_320-det\cfg1.yaml",
+                          epochs=150, imgsz=320, batch=16, close_mosaic=20,
+                          project=r"E:\Git\ultralytics\runs\detect\HYJTFJA_11_251013_320-det",
+                          name=r"1014_e150_i320_b16_cfg1")
 
 if __name__ == '__main__':
     train()
