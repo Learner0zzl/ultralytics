@@ -7,14 +7,14 @@ from my_utils import find_files_by_ext, cv2_imread, cv2_imwrite, Timer, random_p
 
 if __name__ == '__main__':
     model_name = r"1021_e100_i320_b16"
-    model = YOLO(rf"E:\Git\ultralytics\runs\classify\08_XJBTNFLJ_Gui_cls\{model_name}\weights\best.pt")
+    model = YOLO(rf"E:\Git\ultralytics\runs\classify\08_XJBTNFLJ_Si_cls\{model_name}\weights\best.pt")
     parameters = {
         "save_txt": False,
     }
-    root_dir = rf"E:\Data\TrainSet\08_XJBTNFLJ_Gui_cls\images\val"
+    root_dir = rf"E:\Data\TrainSet\08_XJBTNFLJ_Si_cls\images\val"
     img_paths = find_files_by_ext(root_dir, '.bmp', mode="dict", func=lambda f: osp.splitext(f)[0])
     # dst_dir = Path(f"{root_dir}_{model_name}")
-    dst_dir = Path(rf"E:\Data\TrainSet\08_XJBTNFLJ_Gui_cls\result\val_C5_{model_name}")
+    dst_dir = Path(rf"E:\Data\TrainSet\08_XJBTNFLJ_Si_cls\result\val_C5_{model_name}")
     dst_dir.mkdir(parents=True, exist_ok=True)
     timer = Timer()
     for idx, (name, img_path) in enumerate(img_paths.items()):
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         raw_cls = Path(img_path).parent.name
         now_cls = result.probs.top1
 
-        cls_dir = f"raw{raw_cls}_now{now_cls}"
+        cls_dir = f"old{raw_cls}new{now_cls}"
 
         # 保存原图
         # dst_path = dst_dir / f"{name}.bmp"
