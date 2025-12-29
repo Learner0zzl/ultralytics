@@ -9,7 +9,7 @@ def train():
     print(model.info(verbose=True))
     # Train the model
     results = model.train(data=r"project\HYJTFJA_11_251013_320-det\dataset.yaml",
-                          cfg=r"project\HYJTFJA_11_251013_320-det\cfg1.yaml",
+                          cfg=r"project\HYJTFJA_11_251013_320-det\cfg3.yaml",
                           epochs=150, imgsz=320, batch=16, close_mosaic=20,
                           project=r"E:\Git\ultralytics\runs\detect\HYJTFJA_11_251013_320-det",
                           name=r"1014_e150_i320_b16_cfg1")

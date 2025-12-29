@@ -87,11 +87,11 @@ if __name__ == '__main__':
     names_mei = ["5", "6", "7", "8", "9", "10"]
     # for cls in ["矸", "煤"]:
     #     root_dir = rf"E:\Data\04_FJA_coal\test\{cls}"
-    root_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val"
+    root_dir = r"E:\Data\raw\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val"
     img_paths = find_files_by_ext(root_dir, '.bmp', mode="dict", func=lambda f: osp.splitext(f)[0])
     # json_dir = r"E:\Data\04_FJA_coal\HYJTFJA_21_250825_320-det\jsons"
     # # json_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\raw\jsons"
-    json_dir = r"E:\Data\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val"
+    json_dir = r"E:\Data\raw\HYJTFJA\HYJTFJA_11_250722_320_27-det\images\val"
     json_paths = find_files_by_ext(json_dir, '.json', mode="dict", func=lambda f: osp.splitext(f)[0])
     dst_dir = rf"{root_dir}_C5_{model_name}_conf0.1"
     os.makedirs(dst_dir, exist_ok=True)
@@ -130,7 +130,7 @@ if __name__ == '__main__':
                 label_img = src_img.copy()
             timer.hold()
             show_img = np.hstack((label_img, show_img))
-        cv2_imwrite(dst_path, show_img, ".png")
+        # cv2_imwrite(dst_path, show_img, ".png")
         # if idx == 10:
         #     break
     print(timer.print_stats())
