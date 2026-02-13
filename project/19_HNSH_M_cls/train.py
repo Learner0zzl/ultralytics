@@ -8,10 +8,10 @@ def train():
     # model = YOLO(r"E:\Git\ultralytics\runs\classify\09_GN_coal_cls\1024_e150_i320_b16\weights\best.pt")  # build from YAML and transfer weights
 
     # Train the model
-    results = model.train(data=r"E:\Data\TrainSet\19_HNSH_M_cls\0115_a1.7b15\images",
+    results = model.train(data=r"E:\Data\TrainSet\19_HNSH_M_cls\0206_a1.1b8\images",
                           cfg=r"project\19_HNSH_M_cls\cfg.yaml",
                           epochs=150, imgsz=320, batch=16, close_mosaic=15,
-                          name=r"19_HNSH_M_cls\0115_e150_i320_b16")
+                          name=r"19_HNSH_M_cls\0206_e150_i320_b16")
 
 
 if __name__ == '__main__':
