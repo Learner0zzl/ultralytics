@@ -1,9 +1,9 @@
 from ultralytics import YOLO
 
 # Load the YOLO11 model
-model_path = r"E:\Git\ultralytics\runs\classify\25_DJS_W_cls\0305_e150_i320_b16\weights\best.pt"
+model_path = r"E:\Git\ultralytics\runs\detect\26_DBS_Cu_det\0310_v2_e300_i640_b16_all\weights\best.pt"
 model = YOLO(model_path)
-model.export(format="onnx", batch=16)
+model.export(format="onnx", batch=2)
 
 # 输入固定为images   输出固定为output  下面方法已通过推理验证
 import onnx
