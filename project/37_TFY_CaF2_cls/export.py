@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
-dataset = "07_TRQ_Lv_cls"
-name = "0507_e150_i320_b16"
+dataset = "37_TFY_CaF2_cls"
+name = "0515_e150_i320_b16"
 # Load the YOLO11 model
 model_path = rf"E:\Git\ultralytics\runs\classify\{dataset}\{name}\weights\best.pt"
 model = YOLO(model_path)

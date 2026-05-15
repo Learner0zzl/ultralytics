@@ -1,9 +1,8 @@
 from ultralytics import YOLO
 
-dataset = "07_TRQ_Lv_cls"
-name = "0507_e150_i320_b16"
+dataset = r"38_FJA_coal_cls"
 # Load the YOLO11 model
-model_path = rf"E:\Git\ultralytics\runs\classify\{dataset}\{name}\weights\best.pt"
+model_path = rf"E:\Git\ultralytics\runs\classify\{dataset}\0422_e200_i320_b16_v3\weights\best.pt"
 model = YOLO(model_path)
 model.export(format="onnx", batch=16)
 

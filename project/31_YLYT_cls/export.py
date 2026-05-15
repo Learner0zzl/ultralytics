@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 # Load the YOLO11 model
-model_path = r"E:\Git\ultralytics\runs\classify\31_YLYT_cls\0410_2_e150_i320_b16\weights\best.pt"
+model_path = r"E:\Git\ultralytics\runs\classify\31_YLYT_cls\0416_2_e150_i320_b16\weights\best.pt"
 model = YOLO(model_path)
 model.export(format="onnx", batch=8)
 

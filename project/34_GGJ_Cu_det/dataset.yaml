@@ -2,9 +2,9 @@
 
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
 path: E:\Data\TrainSet # dataset root dir
-train: 26_DBS_Cu_det\0420\images # train images (relative to 'path') 4 images
-val: 26_DBS_Cu_det\0420\images # val images (relative to 'path') 4 images
+train: 34_GGJ_Cu_det\0416_a1.8b15\images # train images (relative to 'path') 4 images
+val: 34_GGJ_Cu_det\0416_a1.8b15\images # val images (relative to 'path') 4 images
 test: # test images (optional)
 
 # Classes
-names: ["Cu", "Mo", "J", "F", "TH", "J_Yellow"]
+names: ["FeS", "FeS_white", "J"]

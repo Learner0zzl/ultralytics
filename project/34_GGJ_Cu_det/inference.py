@@ -78,13 +78,12 @@ if __name__ == '__main__':
     model_name = r"0310_v2_e300_i640_b16_all"
     model = YOLO(rf"E:\Git\ultralytics\runs\detect\26_DBS_Cu_det\{model_name}\weights\best.pt")
     parameters = {
-        "conf": 0.1,
+        "conf": 0.025,
         "save_txt": False,
     }
 
-    sub = "2-10"
-    # root_dir = rf"E:\Data\TrainSet\26_DBS_Cu_det\Test\{sub}"
-    root_dir = rf"E:\Data\raw\多宝山铜矿\紫金多宝山26.04.09\Snap\{sub}"
+    sub = "Train"
+    root_dir = rf"E:\Data\TrainSet\26_DBS_Cu_det\Test\{sub}"
     img_paths = find_files_by_ext(root_dir, '.bmp', mode="dict", func=lambda f: osp.splitext(f)[0])
     json_dir = r"E:\Data\TrainSet\26_DBS_Cu_det\jsons"
     json_paths = find_files_by_ext(json_dir, '.json', mode="dict", func=lambda f: osp.splitext(f)[0])
@@ -114,8 +113,7 @@ if __name__ == '__main__':
         show_img = result.plot()
         img_name = osp.basename(img_path)
         old_cls = osp.basename(osp.dirname(img_path))
-        # dst_path = osp.join(dst_dir, cls, f"{conf}#" + img_name + f"#{old_cls}.png")
-        dst_path = osp.join(dst_dir, cls, img_name)
+        dst_path = osp.join(dst_dir, cls, f"{conf}#" + img_name + f"#{old_cls}.png")
         os.makedirs(osp.dirname(dst_path), exist_ok=True)
         if show_label:
             timer.tic(stage="draw_label")
