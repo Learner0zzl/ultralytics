@@ -1,9 +1,11 @@
 from ultralytics import YOLO
 
+dataset = "11_SCG_KL_cls"
+name = "0521_e150_i320_b16"
 # Load the YOLO11 model
-model_path = r"E:\Git\ultralytics\runs\classify\11_SCG_KL_cls\1029_e150_i320_b16\weights\best.pt"
+model_path = rf"E:\Git\ultralytics\runs\classify\{dataset}\{name}\weights\best.pt"
 model = YOLO(model_path)
-model.export(format="onnx", batch=4)
+model.export(format="onnx", batch=16)  # 现场batch=4
 
 # 输入固定为images   输出固定为output  下面方法已通过推理验证
 import onnx
